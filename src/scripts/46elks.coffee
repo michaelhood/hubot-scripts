@@ -49,8 +49,17 @@ module.exports = (robot) ->
         to = user.phone
         to = to.toString().replace(/\d/, '+46')
     else
-      msg.send 'Me cant find ' + to + ', are you sure that person is born?'
-      return    
+      users = robot.brain.usersForFuzzyName(name)
+      if users.length is 1
+        user = users[0]
+        to = user.phone
+        to = to.toString().replace(/\d/, '+46')
+      else if users.length > 1
+        msg.send getAmbiguousUserText users
+        return
+      else
+        msg.send 'Me cant find ' + to + ', are you sure that person is born?'
+        return
 
     data  = QS.stringify from: from, to: to, message: bahdy
 
